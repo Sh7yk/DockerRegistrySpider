@@ -3,7 +3,7 @@ bash script that checks the availability of /v2/_catalog, dumps all blob objects
 ## Usage
 ```bash
 chmod +x docker-rep-spider
-./docker-rep-spider.sh IP
+sudo ./docker-rep-spider.sh IP
 ```
 ## Loot
 loot is in registry_analisys_*
