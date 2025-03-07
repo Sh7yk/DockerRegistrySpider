@@ -30,31 +30,31 @@ OUTPUT_DIR="registry_analysis_$(date +%s)"
 mkdir -p $OUTPUT_DIR
 
 echo -e "${YELLOW}[*] Checking registry access...${NC}"
-if ! curl -sI "http://$REGISTRY/v2/_catalog" | grep -q "200 OK"; then
+if ! curl -i "https://$REGISTRY/v2/_catalog" | grep -q "200 OK"; then
     echo -e "${GREEN}Not vuln${NC}"
     exit 0
 fi
 
 echo -e "${GREEN}[+] Registry is accessible${NC}"
 
-repos=$(curl -s "http://$REGISTRY/v2/_catalog" | jq -r '.repositories[]')
+repos=$(curl -s "https://$REGISTRY/v2/_catalog" | jq -r '.repositories[]')
 
 for repo in $repos; do
     echo -e "\n${YELLOW}[*] Processing repository: $repo${NC}"
     REPO_DIR="$OUTPUT_DIR/$repo"
     mkdir -p "$REPO_DIR"
     
-    tags=$(curl -s "http://$REGISTRY/v2/$repo/tags/list" | jq -r '.tags[]')
+    tags=$(curl -s "https://$REGISTRY/v2/$repo/tags/list" | jq -r '.tags[]')
     
     for tag in $tags; do
         echo -e "\n${YELLOW}  [*] Processing tag: $tag${NC}"
         TAG_DIR="$REPO_DIR/$tag"
         mkdir -p "$TAG_DIR"
         
-        manifest=$(curl -s "http://$REGISTRY/v2/$repo/manifests/$tag")
+        manifest=$(curl -s "https://$REGISTRY/v2/$repo/manifests/$tag")
         echo "$manifest" > "$TAG_DIR/manifest.json"
         
-        layers=$(echo "$manifest" | jq -r '.fsLayers[].blobSum')
+        layers=$(echo "$manifest" | jq -r '.layers[].digest')
         
         for layer in $layers; do
             LAYER_DIR="$TAG_DIR/${layer//:/_}"
