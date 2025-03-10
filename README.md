@@ -4,7 +4,7 @@
 bash script that checks the availability of /v2/_catalog, dumps all blob objects and tries to find sensitive data.
 ## Usage
 ```bash
-chmod +x docker-rep-spider
+chmod +x docker-rep-spider.sh
 sudo ./docker-rep-spider.sh <IP> or <domain>
 ```
 ## Loot
